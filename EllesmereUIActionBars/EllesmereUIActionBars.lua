@@ -7397,6 +7397,10 @@ function EAB:FinishSetup()
 
     -- Register with unlock mode (deferred to ensure EllesmereUI is loaded)
     C_Timer_After(0.5, RegisterWithUnlockMode)
+
+    -- Expose bar tables so keybind mode (and other modules) can access them
+    EAB._barFrames  = barFrames
+    EAB._barButtons = barButtons
 end
 
 -------------------------------------------------------------------------------
