@@ -82,7 +82,12 @@ function EMP:OnEnable()
     self:RegisterEvent("PLAYER_ENTERING_WORLD",              "OnEnteringWorld")
 end
 
+function EMP:IsEnabled()
+    return self.db and self.db.profile and self.db.profile.enabled
+end
+
 function EMP:StartRun()
+    if not self:IsEnabled() then return end
     self.Panel:Show()
     self.Timer:Start()
     self.Progress:Refresh()

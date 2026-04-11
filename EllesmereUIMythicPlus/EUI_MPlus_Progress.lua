@@ -40,7 +40,7 @@ function Progress:Refresh()
                 local pct = 0
                 if total > 0 then pct = math.min(100, math.floor((qty / total) * 100 + 0.5)) end
                 f.forcesBar:SetValue(pct)
-                f.forcesText:SetText(pct .. "%")
+                f.forcesText:SetText(string.format("%d / %d  (%d%%)", qty, total, pct))
             else
                 -- Boss criterion
                 bossIndex = bossIndex + 1
