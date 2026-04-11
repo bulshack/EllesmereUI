@@ -28,6 +28,29 @@ local defaults = {
     }
 }
 
+-------------------------------------------------------------------------------
+-- Hide Blizzard's ScenarioObjectiveTracker M+ block while our panel is active.
+-------------------------------------------------------------------------------
+local blizzTrackerHidden = false
+
+local function hideBlizzardMPlusTracker()
+    if blizzTrackerHidden then return end
+    local tracker = ScenarioObjectiveTracker
+    if tracker and tracker.ChallengeModeBlock then
+        tracker.ChallengeModeBlock:Hide()
+        blizzTrackerHidden = true
+    end
+end
+
+local function showBlizzardMPlusTracker()
+    if not blizzTrackerHidden then return end
+    local tracker = ScenarioObjectiveTracker
+    if tracker and tracker.ChallengeModeBlock then
+        tracker.ChallengeModeBlock:Show()
+        blizzTrackerHidden = false
+    end
+end
+
 function EMP:OnInitialize()
     self.db = EllesmereUI.Lite.NewDB("EllesmereUIMythicPlusDB", defaults)
 end
@@ -63,10 +86,12 @@ function EMP:StartRun()
     self.Panel:Show()
     self.Timer:Start()
     self.Progress:Refresh()
+    hideBlizzardMPlusTracker()
 end
 
 function EMP:StopRun(completed)
     self.Timer:Stop()
+    showBlizzardMPlusTracker()
     if completed then
         -- Leave panel visible for a moment so the player can see the final state
         C_Timer.After(10, function() self.Panel:Hide() end)
