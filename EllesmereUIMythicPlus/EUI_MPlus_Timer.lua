@@ -30,9 +30,9 @@ end
 
 local function chestLabel(elapsed, limit)
     if limit <= 0 then return "" end
-    if elapsed < limit * 0.6 then return "chest 3" end
-    if elapsed < limit * 0.8 then return "chest 2" end
-    if elapsed < limit then return "chest 1" end
+    if elapsed < limit * 0.6 then return "+3" end
+    if elapsed < limit * 0.8 then return "+2" end
+    if elapsed < limit then return "+1" end
     return "depleted"
 end
 
@@ -47,17 +47,19 @@ function Timer:Start()
         self.timeLimit = 0
     end
 
-    self.startTime = GetTime()
+    -- Only set startTime and ticker on the first Start() call.
+    -- This guards against double-start (e.g. OnEnable + PLAYER_ENTERING_WORLD)
+    -- resetting the elapsed timer mid-run.
+    if not self.ticker then
+        self.startTime = GetTime()
+        self.ticker = C_Timer.NewTicker(TICK_INTERVAL, function() Timer:Tick() end)
+    end
 
     local f = EMP.Panel.frame
     if f then
         f.title:SetText(string.upper(self.mapName))
-        local level = C_ChallengeMode.GetActiveKeystoneInfo and select(1, C_ChallengeMode.GetActiveKeystoneInfo())
+        local level = C_ChallengeMode.GetActiveKeystoneInfo and C_ChallengeMode.GetActiveKeystoneInfo()
         f.keyLevel:SetText(level and ("+" .. level) or "")
-    end
-
-    if not self.ticker then
-        self.ticker = C_Timer.NewTicker(TICK_INTERVAL, function() Timer:Tick() end)
     end
 end
 

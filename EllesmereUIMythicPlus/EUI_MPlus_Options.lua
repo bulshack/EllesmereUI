@@ -12,8 +12,9 @@ local function makeCheckbox(parent, label, dbKey, y)
     if Widgets and Widgets.CreateCheckbox then
         cb = Widgets.CreateCheckbox(parent, label)
     else
-        cb = CreateFrame("CheckButton", nil, parent, "InterfaceOptionsCheckButtonTemplate")
-        cb.Text:SetText(label)
+        -- Fallback: minimal CheckButton (EllesmereUI dependency should make this unreachable)
+        cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+        if cb.text then cb.text:SetText(label) end
     end
     cb:SetPoint("TOPLEFT", parent, "TOPLEFT", 16, y)
     cb:SetChecked(EMP.db.profile[dbKey] and true or false)

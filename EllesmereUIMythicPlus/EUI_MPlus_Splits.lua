@@ -6,8 +6,8 @@ local EMP = EllesmereUIMythicPlus
 local Splits = EMP.Splits
 
 local function formatDelta(delta)
-    local sign = "-"
-    if delta > 0 then sign = "+" end
+    local sign = "+"
+    if delta < 0 then sign = "-" end
     local abs = math.abs(delta)
     local m = math.floor(abs / 60)
     local s = math.floor(abs % 60)

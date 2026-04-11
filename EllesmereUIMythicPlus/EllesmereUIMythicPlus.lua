@@ -2,7 +2,7 @@
 --  EllesmereUIMythicPlus.lua
 --  Main addon: lifecycle, shared namespace, event routing.
 -------------------------------------------------------------------------------
-local ADDON_NAME, ns = ...
+local ADDON_NAME = ...
 local EMP = EllesmereUI.Lite.NewAddon(ADDON_NAME)
 
 -- Shared namespace. Each component file attaches its module table here.
@@ -109,8 +109,16 @@ function EMP:OnDeathCountChanged()    self.Progress:RefreshDeaths() end
 
 function EMP:OnEnteringWorld()
     if C_ChallengeMode.IsChallengeModeActive and C_ChallengeMode.IsChallengeModeActive() then
-        self:StartRun()
+        -- Guard against double-start from OnEnable + PLAYER_ENTERING_WORLD race
+        if not self.Timer.ticker then
+            self:StartRun()
+        end
     else
-        self.Panel:Hide()
+        -- Not in a keystone — make sure we clean up if we were running
+        if self.Timer.ticker then
+            self:StopRun(false)
+        else
+            self.Panel:Hide()
+        end
     end
 end
