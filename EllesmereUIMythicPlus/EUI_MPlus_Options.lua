@@ -72,14 +72,29 @@ function Options:Create()
         hideOnEscape = true,
     }
 
-    if Settings and Settings.RegisterCanvasLayoutSubcategory and SettingsPanel then
-        local category = Settings.GetCategory("EllesmereUI")
-        if category then
-            Settings.RegisterCanvasLayoutSubcategory(category, panel, panel.name)
-        end
+    panel.name = "EllesmereUI Mythic+"
+
+    -- Register as a top-level category in Blizzard Settings (Dragonflight+)
+    if Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterAddOnCategory then
+        local category = Settings.RegisterCanvasLayoutCategory(panel, panel.name)
+        Settings.RegisterAddOnCategory(category)
+        self.category = category
     elseif InterfaceOptions_AddCategory then
         InterfaceOptions_AddCategory(panel)
     end
 
     self.frame = panel
+end
+
+-- Slash command to open the options panel directly
+SLASH_EUIMPLUS1 = "/euimplus"
+SLASH_EUIMPLUS2 = "/euimythic"
+SlashCmdList["EUIMPLUS"] = function()
+    if Options.category and Settings and Settings.OpenToCategory then
+        Settings.OpenToCategory(Options.category:GetID())
+    elseif Options.frame and InterfaceOptionsFrame_OpenToCategory then
+        InterfaceOptionsFrame_OpenToCategory(Options.frame)
+    else
+        print("|cff0cd29f[EllesmereUI Mythic+]|r Options panel not available.")
+    end
 end
