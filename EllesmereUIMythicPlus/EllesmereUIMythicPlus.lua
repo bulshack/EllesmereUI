@@ -42,6 +42,9 @@ function EMP:OnEnable()
     self.Panel:Create()
     self.Panel:Hide()
 
+    -- Register options panel
+    self.Options:Create()
+
     -- If the player reloads UI mid-keystone, show the panel now
     if C_ChallengeMode.IsChallengeModeActive and C_ChallengeMode.IsChallengeModeActive() then
         self:StartRun()
