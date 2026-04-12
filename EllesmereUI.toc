@@ -20,6 +20,9 @@ EllesmereUI_Lite.lua
 # One-time data migration (runs before child addons init)
 EllesmereUI_Migration.lua
 
+# Bulshack's profile preset (auto-applied on fresh installs)
+EllesmereUI_BulshackPreset.lua
+
 # Early startup -- applies engine-cached settings before PLAYER_LOGIN
 EllesmereUI_Startup.lua
 
