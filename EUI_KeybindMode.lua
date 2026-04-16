@@ -14,12 +14,6 @@ local InCombatLockdown = InCombatLockdown
 local SetBinding, GetBindingKey, SaveBindings = SetBinding, GetBindingKey, SaveBindings
 local GetBindingAction = GetBindingAction
 
--- Debug log (silent by default; set EllesmereUIDB.keybindDebug = true to enable)
-local function DebugLog(msg)
-    if not (EllesmereUIDB and EllesmereUIDB.keybindDebug) then return end
-    print("|cff0cd29f[KB]|r " .. msg)
-end
-
 -- State
 local isActive = false
 local keybindFrame = nil       -- main overlay frame
@@ -645,6 +639,7 @@ local function DoBindKey(ov, keyCombo)
     if not cmd then return end
     SetBinding(keyCombo, nil)
     SetBinding(keyCombo, cmd)
+    SaveBindings(2)
     -- Refresh all overlays
     for _, other in ipairs(buttonOverlays) do
         RefreshOverlayText(other)
@@ -702,6 +697,7 @@ local function ClearKeybind(ov)
         cleared = true
     end
     if cleared then
+        SaveBindings(2)
         RefreshOverlayText(ov)
         FlashFeedback(ov, "Cleared!", 1, 0.35, 0.35)
     end
@@ -792,7 +788,6 @@ local function CreateButtonOverlay(btn, barKey, buttonIndex)
         if IsAltKeyDown() then combo = combo .. "ALT-" end
         combo = combo .. bindBtn
 
-        DebugLog("MOUSE=" .. combo .. " bar=" .. self._barKey .. " idx=" .. self._buttonIndex)
         ApplyKeybind(self, combo)
     end)
 
@@ -802,7 +797,6 @@ local function CreateButtonOverlay(btn, barKey, buttonIndex)
         self._border:SetColor(ACCENT_R, ACCENT_G, ACCENT_B, 0.8)
         self._bg:SetColorTexture(ACCENT_R, ACCENT_G, ACCENT_B, 0.12)
         self._tooltip:Show()
-        DebugLog("HOVER bar=" .. self._barKey .. " idx=" .. self._buttonIndex .. " cmd=" .. (GetBindingCommand(self._barKey, self._buttonIndex) or "nil") .. " btnName=" .. (self._actionBtn:GetName() or "anon") .. " btnID=" .. (self._actionBtn:GetID() or "?"))
     end)
 
     ov:SetScript("OnLeave", function(self)
@@ -832,7 +826,6 @@ local function CreateAllButtonOverlays()
                 if btn and btn:IsShown() then
                     local ov = CreateButtonOverlay(btn, barKey, i)
                     buttonOverlays[#buttonOverlays + 1] = ov
-                    DebugLog("OVERLAY bar=" .. barKey .. " idx=" .. i .. " btn=" .. (btn:GetName() or "anon") .. " btnID=" .. (btn:GetID() or "?") .. " cmd=" .. (GetBindingCommand(barKey, i) or "nil"))
                 end
             end
         end
@@ -941,7 +934,6 @@ OpenKeybindMode = function()
         if key == "ESCAPE" then
             self:SetPropagateKeyboardInput(false)
             if hoveredOverlay then
-                DebugLog("ESC unbind bar=" .. hoveredOverlay._barKey .. " idx=" .. hoveredOverlay._buttonIndex)
                 ClearKeybind(hoveredOverlay)
             else
                 CloseKeybindMode()
@@ -965,7 +957,6 @@ OpenKeybindMode = function()
         if IsAltKeyDown() then combo = combo .. "ALT-" end
         combo = combo .. key
 
-        DebugLog("KEY=" .. combo .. " bar=" .. hoveredOverlay._barKey .. " idx=" .. hoveredOverlay._buttonIndex .. " cmd=" .. (GetBindingCommand(hoveredOverlay._barKey, hoveredOverlay._buttonIndex) or "nil"))
         ApplyKeybind(hoveredOverlay, combo)
     end)
 
